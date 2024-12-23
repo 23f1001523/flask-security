@@ -1,0 +1,6 @@
+flask
+flask-sqlalchemy
+flask_security
+setuptools
+requests
+argon2_cffi

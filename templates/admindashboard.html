@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if userdata %}
+        <div>Welcome {{ userdata.email }}</div>
+        <a class="btn btn-primary" href="/getusers">Get Users</a>
+        {% if users %}
+        <table>
+            <thead>
+            <th>User id</th>
+            <th>Email</th>
+            <th>Name</th>
+            </thead>
+            <tbodY>
+                {% for user in users %}
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.name}}</td>
+
+                </tr>
+                {% endfor %}
+            </tbodY>
+        </table>
+        {% endif %}
+    {% endif %}
+{% endblock %}
