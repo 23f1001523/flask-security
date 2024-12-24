@@ -1,36 +1,30 @@
-
-
+from flask_sqlalchemy import SQLAlchemy
+from flask_security import UserMixin, RoleMixin
 from datetime import datetime
-from flask_security import RoleMixin, UserMixin
-from flask_security.models import fsqla_v3 as fsqla
 from extensions import db, security
+from flask_security.models import fsqla_v3 as fsqla
 
 fsqla.FsModels.set_db_info(db)
 
-class User(db.Model, UserMixin):
-    __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
-    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
-    roles = db.relationship('Role', secondary='users_roles', backref='user')
-    active = db.Column(db.Boolean,default=True)
-    
-
-class Role(db.Model, RoleMixin):
-    __tablename__ = 'role'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(10), unique=True, nullable=False)
-    description = db.Column(db.String(50), nullable=False)
-
-# roles_users = db.Table('roles_users',
-#     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-#     db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
-# )
-
-class UserRole(db.Model):
-    __tablename__ = 'users_roles'
+class RolesUsers(db.Model):
     extend_existing=True
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column('user_id', db.Integer(), db.ForeignKey('user.id'))
+    role_id = db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+    __table_args__ = {'extend_existing': True}
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=False)
+    email = db.Column(db.String, unique=True)
+    password = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
+    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
+    roles = db.relationship('Role', secondary='roles_users',
+                         backref=db.backref('users', lazy='dynamic'))
+    
+    
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))

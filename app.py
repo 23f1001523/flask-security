@@ -8,13 +8,19 @@ from createviews import createViews
 
 
 class LocalDevelopmentConfig():
+  DEBUG=True
+  SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
+  
+  # Flsk-Security Settings
   SQLALCHEMY_TRACK_MODIFICATIONS = False
   SECURITY_PASSWORD_SALT = 'saltypassword'
   SECRET_KEY="myflasksecret"
-  SQLALCHEMY_DATABASE_URI = "sqlite:///database.db"
+  WTF_CSRF_ENABLED = False
+  SECURITY_TOKEN_AUTHENTICATION_HEADER = 'Authentication-Token'
   SECURITY_LOGIN_URL= "/login"
   SECURITY_LOGIN_VIEW = None
-  DEBUG=True
+  
+  
     
 # user_datastore=SQLAlchemyUserDatastore(db,User,Role)
 
@@ -22,7 +28,7 @@ def createApp():
     app = Flask(__name__,template_folder='templates', static_folder='static', static_url_path='/static')
     app.config.from_object(LocalDevelopmentConfig)
      # configure token
-    app.config['SECURITY_TOKEN_AUTHENTICATION_HEADER'] = 'Authentication-Token'
+    app.config
     app.config['WTF_CSRF_CHECK_DEFAULT'] =False
     app.config['SECURITY_CSRF_PROTECT_MECHANISM'] = []
     app.config['SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS'] = True
@@ -37,7 +43,7 @@ def createApp():
    
     with app.app_context():
         user_datastore=SQLAlchemyUserDatastore(db,User,Role)
-        security.init_app(app,db,user_datastore)
+        security.init_app(app,user_datastore)
 
         db.create_all()
 
